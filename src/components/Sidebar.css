@@ -1,0 +1,57 @@
+
+.sidebar-nav {
+    width: 17%;
+    background-color: rgba(13, 13, 13, 0.60);
+    height: 100%;
+    border: none;
+    display: flex;
+    flex-direction: column
+}
+
+.user-data {
+    display: flex;
+    text-align: left;
+}
+
+.user-details>h3 {
+    font-size: 1.3em;
+    color: #fafafa
+}
+
+.user-details>h5 {
+    font-size: 0.8em;
+    color: #fafafa
+}
+
+.user-details {
+    padding-left: 0.3em
+}
+
+.profile-picture {
+    height: 3em
+}
+
+.sidebar-options {
+    color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 100%;
+    text-transform: uppercase
+}
+
+.option {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: 0.3em solid transparent;
+    padding-left: .5em;
+    
+}
+
+.option:hover {
+    color: #0cd387;
+    border-left: .2em solid #0cd387;
+    cursor: pointer;
+    background-color: #32506f;
+}
