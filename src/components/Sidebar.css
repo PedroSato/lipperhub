@@ -8,9 +8,10 @@
     flex-direction: column
 }
 
-.user-data {
+.user-information {
     display: flex;
     text-align: left;
+    margin-bottom: 1em
 }
 
 .user-details>h3 {
@@ -28,7 +29,9 @@
 }
 
 .profile-picture {
-    height: 3em
+    height: 3em;
+    width:3em;
+    border-radius:50%
 }
 
 .sidebar-options {
@@ -37,9 +40,13 @@
     flex-direction: column;
     text-align: left;
     width: 100%;
-    text-transform: uppercase
+    text-transform: uppercase;
+    margin-left:0
 }
-
+.logo-img{
+    transform: scale(0.7);
+    margin-bottom: 1em
+}
 .option {
     display: block;
     width: 100%;

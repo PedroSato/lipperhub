@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router'
 import logo from '../assets/images/logo.png'
 import './LoginForm.css'
 import api from '../lib/api'
-export default class LoginForm extends Component {
+
+
+class LoginForm extends Component {
+
+
 
     state = {
         email: '',
@@ -18,15 +22,13 @@ export default class LoginForm extends Component {
 
         try {
 
-            var user = await api.post('/login', { email, password })
-
+            const user = await api.post('/login', { email, password })
+            if (user) { this.props.history.push('/adress') }
         } catch (err) {
-            console.log(err)
+            console.log(err.response)
+
         }
-        if (user) {
-            const redirect = () =>{ window.location.href = '/adress' }
-            await redirect()
-        }
+
 
 
 
@@ -40,14 +42,14 @@ export default class LoginForm extends Component {
                 <div className="box-container">
                     <img className="lh-logo" src={logo} />
                     <form className="form-login">
-                        <label className="form-label" for="user">Usuário</label>
+                        <label className="form-label" for="user" >Usuário</label>
                         <input className="form-input" type="text" id="user" onChange={e => this.setState({ email: e.target.value })} />
                         <label className="form-label" for="password">Senha</label>
                         <input className="form-input" type="password" id="password" onChange={e => this.setState({ password: e.target.value })} />
                         <div className="content-link">
                             <div className="form-links">
-                                <a>Esqueci minha senha</a>
-                                <a>Criar novo usuário</a>
+                                <a href="/forgetPassword">Esqueci minha senha</a>
+                                <a href="/register">Criar novo usuário</a>
                             </div>
                             <div>
                                 <button className="form-button" onClick={(e) => this.handleSubmit(e)}>Entrar</button>
@@ -59,3 +61,5 @@ export default class LoginForm extends Component {
         );
     }
 }
+LoginForm = withRouter(LoginForm);
+export default LoginForm

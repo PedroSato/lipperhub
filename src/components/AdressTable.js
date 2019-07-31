@@ -4,16 +4,106 @@ import edit from '../assets/icons/edit.svg'
 import './AdressTable.css'
 import Modal from 'react-awesome-modal'
 import api from '../lib/api'
+import apiCep from '../lib/apiCep'
 export default class components extends Component {
     state = {
-        visible: false,
-        adresses: []
+        userdata: {
+
+            email: '',
+            password: '',
+            name: '',
+            gender: '',
+            birthdate: null,
+            imageFile: null,
+
+            adresses: [{
+                zip_code: null,
+                street: '',
+                number: null,
+                comp: '',
+                state: '',
+                city: ''
+            }]
+
+        },
+        newAdress: {
+            zip_code: null,
+            street: '',
+            number: null,
+            comp: '',
+            state: '',
+            city: ''
+        },
+        endereco: {},
+        cep: '',
+        number: '',
+        comp: ''
     }
 
     async componentDidMount() {
-        const alou = await api.get('/adresses')
-        console.log(alou)
+        try {
+            const user = await api.get('/adresses')
+
+            await this.setState({ userdata: user.data })
+            console.log(this.state, "userdata")
+        } catch (err) {
+            console.log(err)
+        }
+
+
+
     }
+    handleSubmitCep = async (e) => {
+
+        e.preventDefault()
+
+        try {
+            const endereco = await apiCep.get(`/${this.state.cep}/json`)
+
+            this.setState({ endereco: endereco.data })
+            const { logradouro, cep, uf, localidade, bairro } = this.state.endereco
+            const newAdress = {
+                zip_code: cep,
+                street: logradouro,
+                city: localidade,
+                state: uf
+
+            }
+            this.setState({ newAdress: newAdress })
+            console.log(this.state)
+
+        } catch (err) {
+            console.log(err.response)
+
+        }
+
+
+    }
+
+    handleSubmit = async (e) => {
+
+        e.preventDefault()
+
+        try {
+            this.state.newAdress.number = this.state.number
+            this.state.newAdress.comp = this.state.comp
+            const stateDummy = this.state.userdata            
+            stateDummy.adresses.push(this.state.newAdress)
+            this.setState(stateDummy)
+
+            console.log("ISSO IRIA PRA API", this.state.userdata)
+
+            await api.put('/update', this.state.userdata)
+            this.setState(await api.get('/adresses'))
+        } catch (err) {
+            console.log(err)
+
+        }
+
+
+    }
+
+
 
     openModal() {
         this.setState({
@@ -100,19 +190,23 @@ export default class components extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* {
-                                    this.state.adresses.map((adress) =>
+
+                                {
+
+
+                                    this.state.userdata.adresses.map((adress) =>
                                         <tr>
                                             <td> {adress.zip_code} </td>
                                             <td> {adress.street} </td>
-                                            <td> {adress.number} </td>
-                                            <td> {adress.complement} </td>
+                                            <td> {adress.number ? adress.number : '-'} </td>
+                                            <td> {adress.comp ? adress.comp : '-'} </td>
                                             <td> {adress.state} </td>
                                             <td> {adress.city} </td>
                                             <td> <img className="action" src={edit} alt="" /> <img className="action" src={trash} alt="" /> </td>
                                         </tr>
                                     )
-                                } */}
+                                }
+
                             </tbody>
                         </table>
                     </div>
@@ -134,10 +228,10 @@ export default class components extends Component {
                                 <div className="zip-content">
                                     <div className="zip-input">
                                         <label className="form-label" for="zip">CEP</label>
-                                        <input className="form-input" type="text" id="zip" />
+                                        <input className="form-input" type="text" id="zip" onChange={e => this.setState({ cep: e.target.value })} />
                                     </div>
                                     <div>
-                                        <button className="zip-btn">Buscar</button>
+                                        <button className="zip-btn" onClick={(e) => this.handleSubmitCep(e)} > Buscar</button>
                                     </div>
                                 </div>
 
@@ -146,12 +240,12 @@ export default class components extends Component {
 
                                     <div className="number-input">
                                         <label className="form-label" for="number">Nº</label>
-                                        <input className="form-input-number" type="text" id="number" />
+                                        <input className="form-input-number" type="text" id="number" onChange={e => this.setState({ number: e.target.value })} />
                                     </div>
 
                                     <div className="comp-input">
                                         <label className="form-label" for="complement">Complemento</label>
-                                        <input className="form-input" type="text" id="complement" />
+                                        <input className="form-input" type="text" id="complement" onChange={e => this.setState({ comp: e.target.value })} />
                                     </div>
 
 
@@ -163,14 +257,16 @@ export default class components extends Component {
                                     <h7>Resultado:</h7>
                                 </div>
                                 <div className="api-result">
-                                    <span>Bairro:Cidade das Monçoes</span><br />
-                                    <span>Cidade:São Paulo</span><br />
-                                    <span>Logradouro:Rua doutor geraldo campos moreira</span><br />
-                                    <span>CEP:12345-678</span><br />
-                                    <span>Estado:SP</span>
+
+                                    <span>Bairro:{this.state.endereco.bairro}</span><br />
+                                    <span>Cidade:{this.state.endereco.localidade}</span><br />
+                                    <span>Logradouro:{this.state.endereco.logradouro}</span><br />
+                                    <span>CEP:{this.state.endereco.cep}</span><br />
+                                    <span>Estado:{this.state.endereco.uf}</span>
                                 </div>
                                 <div className="modal-actions">
-                                    <button className="cancel-btn" onClick={() => this.closeModal()}>Cancelar</button><button className="save-btn">Salvar</button>
+                                    <button className="cancel-btn" onClick={() => this.closeModal()}>Cancelar</button>
+                                    <button className="save-btn" onClick={(e) => this.handleSubmit(e)}>Salvar</button>
                                 </div>
                             </div>
                         </div>

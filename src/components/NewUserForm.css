@@ -29,6 +29,11 @@
     margin: 0.5em 0;
 }
 
+a {
+    text-decoration: none;
+    color: rgb(148, 148, 148);
+}
+
 .form-input {
     width: 100%;
     box-sizing: border-box;
@@ -38,12 +43,11 @@
 }
 
 .form-button {
-    background-color:#199494;
+    background-color: #199494;
     padding: 0 1em;
     border: none;
-    color:#fafafa;
+    color: #fafafa;
     border-radius: .4em;
-    
 }
 
 .form-links {
